@@ -1,10 +1,10 @@
 [Desktop Entry]
 Type=Application
 Name=Session Timer
-Comment=Floating glass timer for online lessons
+Comment=Floating glass timer for lessons, focused work and anything else
 Exec=session-timer
 Icon=session-timer
 Terminal=false
 Categories=Utility;
-Keywords=timer;lesson;tutor;stopwatch;
+Keywords=timer;stopwatch;lesson;tutor;study;focus;pomodoro;
 StartupWMClass=session-timer

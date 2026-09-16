@@ -1,10 +1,19 @@
 # Session Timer
 
-A small frameless glass timer that floats above every window on your Ubuntu desktop. Made for online tutors who charge by the hour: the elapsed time stays visible to you and — on a screen share — to your student.
+A small frameless glass stopwatch that floats above every window on your Ubuntu desktop. It started as a tool for online tutors who charge by the hour, but it's just a clean always-visible timer — use it for anything you want to keep an eye on while you work.
 
 <p align="center"><img src="docs/widget.png" width="464" alt="The Session Timer widget in dark and light mode: a square translucent glass tile showing 1:23:45, Started 2:56 PM, with Pause and Reset buttons"></p>
 
 *Design reference: the macOS / iOS Weather widgets and iOS 26's liquid glass — translucent, rounded, a bright rim, one big light-weight number.*
+
+## Use it for
+
+- **Online lessons** — the elapsed time stays in view for you and, on a screen share, for your student. Pause for breaks, reset for the next student.
+- **Focused study or deep work** — start it, put your phone away, and see how long you've actually stayed on task.
+- **Billable client work** — freelancers, consultants, anyone who needs to know how long a call or a task ran.
+- **Practice sessions** — instrument practice, language drills, workouts at the desk.
+- **Meetings and talks** — keep a presentation or a stand-up honest without glancing at a phone.
+- **Anything else you want timed** — it's a stopwatch that stays on top; there's nothing tutoring-specific in it.
 
 ## What it does
 

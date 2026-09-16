@@ -29,9 +29,10 @@ Architecture: all
 Depends: python3, python3-gi, python3-gi-cairo, gir1.2-gtk-3.0
 Maintainer: Muhammad Zeeshan Javed <zeeshanjawed126.mzj@gmail.com>
 Homepage: https://github.com/Zee5han/session-timer
-Description: Floating glass timer for online lessons
- A small frameless timer that stays above every window so both tutor and
- student can see how long the lesson has run. Start, pause, resume, reset.
+Description: Floating glass timer for lessons, focused work and more
+ A small frameless stopwatch that stays above every window. Made for online
+ lessons, equally at home timing study sessions, client work or meetings.
+ Start, pause, resume, reset.
 CONTROL
 
 dpkg-deb --root-owner-group --build "$pkg" >/dev/null
