@@ -2,7 +2,7 @@
 
 A small frameless glass timer that floats above every window on your Ubuntu desktop. Made for online tutors who charge by the hour: the elapsed time stays visible to you and — on a screen share — to your student.
 
-<p align="center"><img src="docs/widget.png" width="632" alt="The Session Timer widget in dark and light mode: a translucent glass card showing 1:23:45, Started 2:56 PM, with Pause and Reset buttons"></p>
+<p align="center"><img src="docs/widget.png" width="464" alt="The Session Timer widget in dark and light mode: a square translucent glass tile showing 1:23:45, Started 2:56 PM, with Pause and Reset buttons"></p>
 
 *Design reference: the macOS / iOS Weather widgets and iOS 26's liquid glass — translucent, rounded, a bright rim, one big light-weight number.*
 
@@ -21,7 +21,7 @@ A small frameless glass timer that floats above every window on your Ubuntu desk
 **Ubuntu / Debian — download the package** from the [latest release](https://github.com/Zee5han/session-timer/releases/latest), then:
 
 ```bash
-sudo apt install ./session-timer_1.1.0_all.deb
+sudo apt install ./session-timer_1.2.0_all.deb
 ```
 
 It appears in your app grid as **Session Timer**. Remove it with `sudo apt remove session-timer`.

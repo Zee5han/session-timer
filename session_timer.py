@@ -33,7 +33,7 @@ Gdk.set_program_class(APP_ID)
 from gi.repository import Gtk  # noqa: E402
 STATE_FILE = Path(GLib.get_user_config_dir()) / APP_ID / "state.json"
 
-WIDGET_WIDTH = 272
+WIDGET_SIZE = 188  # the glass is square
 RADIUS = 24
 SHADOW = 22  # transparent margin around the glass, used for the drop shadow
 
@@ -42,24 +42,25 @@ window { background-color: transparent; }
 
 label { font-family: "Ubuntu Sans", "Ubuntu", "Cantarell", sans-serif; }
 
-.title  { font-size: 11px; font-weight: 700; letter-spacing: 1px; }
-.status { font-size: 11px; font-weight: 500; }
-.clock  { font-size: 46px; font-weight: 300; letter-spacing: -1px; font-feature-settings: "tnum"; }
+.title  { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; }
+.status { font-size: 10px; font-weight: 500; }
+.clock  { font-size: 40px; font-weight: 300; letter-spacing: -1px; font-feature-settings: "tnum"; }
 .clock.paused { color: #B8780A; }
-.sub    { font-size: 12px; font-weight: 500; font-feature-settings: "tnum"; }
+.sub    { font-size: 11px; font-weight: 500; font-feature-settings: "tnum"; }
 
 button {
   min-height: 0;
-  padding: 5px 14px;
+  min-width: 0;
+  padding: 5px 6px;
   border-radius: 999px;
   background-image: none;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   text-shadow: none;
   outline-offset: 2px;
 }
 button label { text-shadow: none; }
-button.close { padding: 0 6px; border: none; box-shadow: none; background-color: transparent; font-size: 13px; }
+button.close { padding: 0 4px; border: none; box-shadow: none; background-color: transparent; font-size: 12px; }
 
 /* ---- Dark: smoked glass, white text ---- */
 window.dark label { color: white; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45); }
@@ -275,7 +276,7 @@ class TimerWindow(Gtk.Window):
         self.set_keep_above(True)
         self.stick()  # visible on every workspace
         self.set_app_paintable(True)
-        self.set_default_size(WIDGET_WIDTH + 2 * SHADOW, -1)
+        self.set_size_request(WIDGET_SIZE + 2 * SHADOW, WIDGET_SIZE + 2 * SHADOW)
 
         screen = self.get_screen()
         visual = screen.get_rgba_visual()
@@ -303,20 +304,20 @@ class TimerWindow(Gtk.Window):
 
     def build_ui(self):
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        root.set_margin_top(SHADOW + 13)
-        root.set_margin_bottom(SHADOW + 16)
-        root.set_margin_start(SHADOW + 18)
-        root.set_margin_end(SHADOW + 18)
+        root.set_margin_top(SHADOW + 12)
+        root.set_margin_bottom(SHADOW + 14)
+        root.set_margin_start(SHADOW + 15)
+        root.set_margin_end(SHADOW + 15)
         self.add(root)
 
-        header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         root.pack_start(header, False, False, 0)
 
-        title = Gtk.Label(label="⏱  SESSION")
+        title = Gtk.Label(label="\u23F1 SESSION")
         title.get_style_context().add_class("title")
         header.pack_start(title, False, False, 0)
 
-        close = Gtk.Button(label="✕")
+        close = Gtk.Button(label="\u2715")
         close.get_style_context().add_class("close")
         close.set_tooltip_text("Quit (Ctrl+Q)")
         close.set_can_focus(False)
@@ -327,18 +328,20 @@ class TimerWindow(Gtk.Window):
         self.status.get_style_context().add_class("status")
         header.pack_end(self.status, False, False, 0)
 
+        # Clock and start time sit in the middle of the tile, whatever height it gets.
+        middle = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0, valign=Gtk.Align.CENTER)
+        root.pack_start(middle, True, True, 0)
+
         self.clock = Gtk.Label(xalign=0)
         self.clock.get_style_context().add_class("clock")
-        self.clock.set_margin_top(2)
-        root.pack_start(self.clock, False, False, 0)
+        middle.pack_start(self.clock, False, False, 0)
 
         self.sub = Gtk.Label(xalign=0)
         self.sub.get_style_context().add_class("sub")
-        root.pack_start(self.sub, False, False, 0)
+        middle.pack_start(self.sub, False, False, 0)
 
-        controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8, homogeneous=True)
-        controls.set_margin_top(14)
-        root.pack_start(controls, False, False, 0)
+        controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6, homogeneous=True)
+        root.pack_end(controls, False, False, 0)
 
         self.toggle = Gtk.Button()
         self.toggle.get_style_context().add_class("primary")
@@ -517,7 +520,7 @@ def main():
     window = TimerWindow()
     window.show_all()
     area = Gdk.Display.get_default().get_primary_monitor().get_workarea()
-    window.move(area.x + area.width - WIDGET_WIDTH - 2 * SHADOW - 24, area.y + 48)
+    window.move(area.x + area.width - WIDGET_SIZE - 2 * SHADOW - 24, area.y + 48)
     Gtk.main()
 
 
