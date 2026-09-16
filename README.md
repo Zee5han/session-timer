@@ -36,6 +36,8 @@ cd session-timer
 
 That puts the app in your app grid and on your PATH as `session-timer`, all under `~/.local`. Run `./uninstall.sh` to remove it.
 
+> Pick one method. A `~/.local` install shadows the `.deb`'s launcher, so if you switch from `./install.sh` to the package, run `./uninstall.sh` first.
+
 Or skip installing and just run it:
 
 ```bash
