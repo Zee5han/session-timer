@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Session Timer
+Comment=Floating glass timer for online lessons
+Exec=session-timer
+Icon=session-timer
+Terminal=false
+Categories=Utility;
+Keywords=timer;lesson;tutor;stopwatch;
+StartupWMClass=session-timer

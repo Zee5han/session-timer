@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Session Timer</title>
+  <meta name="description" content="A floating session timer for online tutors. Stays on top of every window so students can see how long the lesson has run.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%233E7BC4'/><circle cx='16' cy='17' r='9' fill='none' stroke='white' stroke-width='2.5'/><path d='M16 11v6l4 2' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round'/></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main class="stage" id="stage">
+
+    <!-- The widget. This one element is moved into the floating window when popped out. -->
+    <section class="widget" id="widget" aria-label="Session timer">
+      <header class="widget-head">
+        <span class="widget-title">
+          <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="8" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M8 5.5V9l2.5 1.5M6 1.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          Session
+        </span>
+        <span class="status" id="status" aria-live="polite">Ready</span>
+      </header>
+
+      <div class="clock" id="clock" role="timer" aria-live="off">0:00:00</div>
+      <div class="started" id="started">Not started yet</div>
+
+      <div class="controls">
+        <button class="btn btn-primary" id="toggle" type="button" aria-keyshortcuts="Space">Start</button>
+        <button class="btn" id="reset" type="button" aria-keyshortcuts="R">Reset</button>
+      </div>
+    </section>
+
+  </main>
+
+  <aside class="dock" id="dock">
+    <button class="btn btn-dock" id="popout" type="button">
+      <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+        <rect x="1.5" y="3.5" width="13" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="8" y="8" width="5" height="4" rx="1" fill="currentColor"/>
+      </svg>
+      Float on top
+    </button>
+    <p class="dock-note" id="dockNote">Opens the timer in a small window that stays above everything else, including your screen share.</p>
+    <p class="dock-keys"><kbd>Space</kbd> start / pause <span class="sep"></span> <kbd>R</kbd> reset</p>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>
