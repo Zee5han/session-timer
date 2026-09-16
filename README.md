@@ -17,13 +17,23 @@ A small frameless glass timer that floats above every window on your Ubuntu desk
 
 ## Install
 
+**Ubuntu / Debian — download the package** from the [latest release](https://github.com/Zee5han/session-timer/releases/latest), then:
+
+```bash
+sudo apt install ./session-timer_1.0.0_all.deb
+```
+
+It appears in your app grid as **Session Timer**. Remove it with `sudo apt remove session-timer`.
+
+**From source, no sudo:**
+
 ```bash
 git clone https://github.com/Zee5han/session-timer.git
 cd session-timer
 ./install.sh
 ```
 
-That puts the app in your app grid as **Session Timer** and on your PATH as `session-timer`. No sudo. Run `./uninstall.sh` to remove it.
+That puts the app in your app grid and on your PATH as `session-timer`, all under `~/.local`. Run `./uninstall.sh` to remove it.
 
 Or skip installing and just run it:
 
@@ -64,6 +74,7 @@ session-timer.desktop  app-grid launcher
 session-timer.svg      icon
 install.sh             per-user install (~/.local)
 uninstall.sh
+packaging/build-deb.sh builds the .deb attached to releases
 web/                   earlier browser version (Chrome picture-in-picture), kept for non-Linux users
 ```
 
