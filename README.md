@@ -2,13 +2,14 @@
 
 A small frameless glass timer that floats above every window on your Ubuntu desktop. Made for online tutors who charge by the hour: the elapsed time stays visible to you and — on a screen share — to your student.
 
-<p align="center"><img src="docs/widget.png" width="316" alt="The Session Timer widget: a translucent glass card showing 1:24:44, Started 2:42 PM, with Pause and Reset buttons"></p>
+<p align="center"><img src="docs/widget.png" width="632" alt="The Session Timer widget in dark and light mode: a translucent glass card showing 1:23:45, Started 2:56 PM, with Pause and Reset buttons"></p>
 
 *Design reference: the macOS / iOS Weather widgets and iOS 26's liquid glass — translucent, rounded, a bright rim, one big light-weight number.*
 
 ## What it does
 
 - **Floats above everything**, on every workspace. No title bar, no frame — just the widget.
+- **Light and dark glass**, following your system's appearance setting (or pick one by right-clicking).
 - **Start / Pause / Resume / Reset**, by button or keyboard.
 - Shows **when the session started**, so both sides can check the start time.
 - **Accurate:** elapsed time is derived from the clock, not from counting ticks.
@@ -20,7 +21,7 @@ A small frameless glass timer that floats above every window on your Ubuntu desk
 **Ubuntu / Debian — download the package** from the [latest release](https://github.com/Zee5han/session-timer/releases/latest), then:
 
 ```bash
-sudo apt install ./session-timer_1.0.0_all.deb
+sudo apt install ./session-timer_1.1.0_all.deb
 ```
 
 It appears in your app grid as **Session Timer**. Remove it with `sudo apt remove session-timer`.
@@ -50,7 +51,7 @@ If GTK's Python bindings are missing (they're preinstalled on Ubuntu Desktop): `
 | Start / pause / resume | **Start** / **Pause** / **Resume** button | `Space` |
 | Reset | **Reset** button | `R` |
 | Move | Drag anywhere on the glass | |
-| Keep on top on/off, Quit | Right-click | `Ctrl+Q` (quit), or the ✕ |
+| Keep on top, light/dark, Quit | Right-click | `Ctrl+Q` (quit), or the ✕ |
 
 > **Screen sharing:** students see the timer when you share your **entire screen**. If you share a single window, it won't be included.
 

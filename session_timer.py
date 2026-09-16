@@ -23,9 +23,14 @@ import gi  # noqa: E402
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 import cairo  # noqa: E402
-from gi.repository import Gdk, GLib, Gtk  # noqa: E402
+from gi.repository import Gdk, Gio, GLib  # noqa: E402
 
 APP_ID = "session-timer"
+# Becomes the X11 window class. GNOME's dock matches it to session-timer.desktop
+# (StartupWMClass) to show the right icon. Must happen before GTK initialises.
+GLib.set_prgname(APP_ID)
+Gdk.set_program_class(APP_ID)
+from gi.repository import Gtk  # noqa: E402
 STATE_FILE = Path(GLib.get_user_config_dir()) / APP_ID / "state.json"
 
 WIDGET_WIDTH = 272
@@ -35,54 +40,86 @@ SHADOW = 22  # transparent margin around the glass, used for the drop shadow
 CSS = b"""
 window { background-color: transparent; }
 
-label {
-  color: white;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
-}
+label { font-family: "Ubuntu Sans", "Ubuntu", "Cantarell", sans-serif; }
 
-.title  { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: rgba(255, 255, 255, 0.80); }
-.status { font-size: 11px; font-weight: 500; color: rgba(255, 255, 255, 0.85); }
+.title  { font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+.status { font-size: 11px; font-weight: 500; }
 .clock  { font-size: 46px; font-weight: 300; letter-spacing: -1px; font-feature-settings: "tnum"; }
-.clock.paused { color: #F6C453; }
-.sub    { font-size: 12px; font-weight: 500; color: rgba(255, 255, 255, 0.70); font-feature-settings: "tnum"; }
+.clock.paused { color: #B8780A; }
+.sub    { font-size: 12px; font-weight: 500; font-feature-settings: "tnum"; }
 
 button {
   min-height: 0;
   padding: 5px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background-color: rgba(255, 255, 255, 0.18);
   background-image: none;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  color: white;
   font-weight: 700;
   font-size: 13px;
   text-shadow: none;
-  outline-color: rgba(255, 255, 255, 0.6);
   outline-offset: 2px;
 }
 button label { text-shadow: none; }
-button:hover  { background-color: rgba(255, 255, 255, 0.30); }
-button:active { background-color: rgba(255, 255, 255, 0.40); }
+button.close { padding: 0 6px; border: none; box-shadow: none; background-color: transparent; font-size: 13px; }
 
-button.primary { background-color: rgba(255, 255, 255, 0.92); border-color: transparent; color: #2C5D95; }
-button.primary label { color: #2C5D95; }
-button.primary:hover { background-color: white; }
-
-button.close {
-  padding: 0 6px;
-  border: none;
-  box-shadow: none;
-  background-color: transparent;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 13px;
+/* ---- Dark: smoked glass, white text ---- */
+window.dark label { color: white; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45); }
+window.dark .title, window.dark .sub { color: rgba(255, 255, 255, 0.72); }
+window.dark .status { color: rgba(255, 255, 255, 0.85); }
+window.dark .clock.paused { color: #F6C453; }
+window.dark button {
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  background-color: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20);
+  color: white;
+  outline-color: rgba(255, 255, 255, 0.6);
 }
-button.close:hover { background-color: rgba(255, 255, 255, 0.20); color: white; }
+window.dark button:hover  { background-color: rgba(255, 255, 255, 0.28); }
+window.dark button:active { background-color: rgba(255, 255, 255, 0.38); }
+window.dark button.primary { background-color: rgba(255, 255, 255, 0.92); border-color: transparent; }
+window.dark button.primary label { color: #1E3A5C; }
+window.dark button.primary:hover { background-color: white; }
+window.dark button.close { background-color: transparent; border: none; box-shadow: none; }
+window.dark button.close label { color: rgba(255, 255, 255, 0.55); }
+window.dark button.close:hover { background-color: rgba(255, 255, 255, 0.20); }
+window.dark button.close:hover label { color: white; }
 
-menu, .menu { background-color: #2b3440; color: white; border-radius: 8px; padding: 4px; }
-menuitem { padding: 6px 12px; border-radius: 6px; }
-menuitem:hover { background-color: rgba(255, 255, 255, 0.15); }
+/* ---- Light: frosted white glass, ink text ---- */
+window.light label { color: #16263A; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45); }
+window.light .title, window.light .sub { color: rgba(22, 38, 58, 0.68); }
+window.light .status { color: rgba(22, 38, 58, 0.85); }
+window.light button {
+  border: 1px solid rgba(22, 38, 58, 0.18);
+  background-color: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  color: #16263A;
+  outline-color: rgba(22, 38, 58, 0.5);
+}
+window.light button:hover  { background-color: rgba(255, 255, 255, 0.80); }
+window.light button:active { background-color: rgba(255, 255, 255, 0.95); }
+window.light button.primary { background-color: #1E3A5C; border-color: transparent; box-shadow: none; }
+window.light button.primary label { color: white; }
+window.light button.primary:hover { background-color: #2A4E78; }
+window.light button.close { background-color: transparent; border: none; box-shadow: none; }
+window.light button.close label { color: rgba(22, 38, 58, 0.5); }
+window.light button.close:hover { background-color: rgba(22, 38, 58, 0.10); }
+window.light button.close:hover label { color: #16263A; }
 """
+
+THEMES = ("system", "light", "dark")
+
+
+def system_prefers_dark():
+    """Read GNOME's light/dark preference; fall back to the GTK theme name elsewhere."""
+    try:
+        source = Gio.SettingsSchemaSource.get_default()
+        if source and source.lookup("org.gnome.desktop.interface", True):
+            scheme = Gio.Settings.new("org.gnome.desktop.interface").get_string("color-scheme")
+            return scheme == "prefer-dark"
+    except Exception:  # noqa: BLE001
+        pass
+    settings = Gtk.Settings.get_default()
+    return bool(settings.get_property("gtk-application-prefer-dark-theme")
+                or "dark" in (settings.get_property("gtk-theme-name") or "").lower())
 
 
 # ---- Timer state ---------------------------------------------------------
@@ -94,6 +131,7 @@ class Session:
         self.started_at = None  # wall-clock ms when the session first started
         self.resumed_at = None  # wall-clock ms of the latest resume, None while paused
         self.banked = 0         # ms accumulated before the latest resume
+        self.theme = "system"   # "system", "light" or "dark"
         self.load()
 
     @staticmethod
@@ -135,6 +173,8 @@ class Session:
             self.started_at = data.get("startedAt")
             self.resumed_at = data.get("resumedAt")
             self.banked = int(data.get("banked", 0))
+            if data.get("theme") in THEMES:
+                self.theme = data["theme"]
         except (OSError, ValueError):
             pass
 
@@ -142,7 +182,8 @@ class Session:
         try:
             STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
             STATE_FILE.write_text(json.dumps(
-                {"startedAt": self.started_at, "resumedAt": self.resumed_at, "banked": self.banked}))
+                {"startedAt": self.started_at, "resumedAt": self.resumed_at,
+                 "banked": self.banked, "theme": self.theme}))
         except OSError:
             pass
 
@@ -164,18 +205,23 @@ def rounded_rect(cr, x, y, w, h, r):
     cr.close_path()
 
 
-def draw_glass(cr, x, y, w, h, r):
+def draw_glass(cr, x, y, w, h, r, dark):
     # Soft drop shadow: stacked, growing, faint rounded rects.
     for i in range(16, 0, -1):
         rounded_rect(cr, x - i * 0.55, y + 6 - i * 0.35, w + i * 1.1, h + i * 0.7, r + i * 0.5)
-        cr.set_source_rgba(0, 0, 0, 0.018)
+        cr.set_source_rgba(0, 0, 0, 0.022 if dark else 0.014)
         cr.fill()
 
-    # Body: a light tint that fades towards the bottom, like thick clear glass.
+    # Body: dark mode is smoked glass, light mode is frosted white. Both fade
+    # towards the bottom like a thick slab.
     rounded_rect(cr, x, y, w, h, r)
     body = cairo.LinearGradient(x, y, x, y + h)
-    body.add_color_stop_rgba(0, 1, 1, 1, 0.36)
-    body.add_color_stop_rgba(1, 1, 1, 1, 0.20)
+    if dark:
+        body.add_color_stop_rgba(0, 0.10, 0.13, 0.18, 0.62)
+        body.add_color_stop_rgba(1, 0.06, 0.08, 0.12, 0.72)
+    else:
+        body.add_color_stop_rgba(0, 1, 1, 1, 0.90)
+        body.add_color_stop_rgba(1, 1, 1, 1, 0.82)
     cr.set_source(body)
     cr.fill()
 
@@ -185,7 +231,7 @@ def draw_glass(cr, x, y, w, h, r):
 
     # Specular sheen sweeping in from the top-left corner.
     sheen = cairo.LinearGradient(x, y, x + w * 0.6, y + h)
-    sheen.add_color_stop_rgba(0.0, 1, 1, 1, 0.22)
+    sheen.add_color_stop_rgba(0.0, 1, 1, 1, 0.16 if dark else 0.35)
     sheen.add_color_stop_rgba(0.45, 1, 1, 1, 0.0)
     cr.set_source(sheen)
     cr.paint()
@@ -193,20 +239,25 @@ def draw_glass(cr, x, y, w, h, r):
     # Refracted inner edge: a wide, faint band just inside the outline.
     rounded_rect(cr, x + 4, y + 4, w - 8, h - 8, r - 4)
     cr.set_line_width(7)
-    cr.set_source_rgba(1, 1, 1, 0.07)
+    cr.set_source_rgba(1, 1, 1, 0.06 if dark else 0.30)
     cr.stroke()
     rounded_rect(cr, x + 1.5, y + 1.5, w - 3, h - 3, r - 1.5)
     cr.set_line_width(1.5)
-    cr.set_source_rgba(1, 1, 1, 0.16)
+    cr.set_source_rgba(1, 1, 1, 0.14 if dark else 0.55)
     cr.stroke()
     cr.restore()
 
     # Outline: bright where light hits (top-left), dim opposite.
     rounded_rect(cr, x + 0.5, y + 0.5, w - 1, h - 1, r - 0.5)
     rim = cairo.LinearGradient(x, y, x + w, y + h)
-    rim.add_color_stop_rgba(0.0, 1, 1, 1, 0.85)
-    rim.add_color_stop_rgba(0.5, 1, 1, 1, 0.35)
-    rim.add_color_stop_rgba(1.0, 1, 1, 1, 0.55)
+    if dark:
+        rim.add_color_stop_rgba(0.0, 1, 1, 1, 0.55)
+        rim.add_color_stop_rgba(0.5, 1, 1, 1, 0.18)
+        rim.add_color_stop_rgba(1.0, 1, 1, 1, 0.35)
+    else:
+        rim.add_color_stop_rgba(0.0, 1, 1, 1, 0.95)
+        rim.add_color_stop_rgba(0.5, 0.09, 0.15, 0.23, 0.18)
+        rim.add_color_stop_rgba(1.0, 1, 1, 1, 0.7)
     cr.set_source(rim)
     cr.set_line_width(1)
     cr.stroke()
@@ -223,9 +274,6 @@ class TimerWindow(Gtk.Window):
         self.set_resizable(False)
         self.set_keep_above(True)
         self.stick()  # visible on every workspace
-        self.set_skip_taskbar_hint(True)
-        self.set_skip_pager_hint(True)
-        self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         self.set_app_paintable(True)
         self.set_default_size(WIDGET_WIDTH + 2 * SHADOW, -1)
 
@@ -246,6 +294,8 @@ class TimerWindow(Gtk.Window):
 
         self.build_ui()
         self.build_menu()
+        self.apply_theme()
+        self.watch_system_theme()
         self.render()
         GLib.timeout_add(250, self.tick)
 
@@ -308,10 +358,50 @@ class TimerWindow(Gtk.Window):
         self.on_top.connect("toggled", lambda item: self.set_keep_above(item.get_active()))
         self.menu.append(self.on_top)
         self.menu.append(Gtk.SeparatorMenuItem())
+
+        group = None
+        for value, label in (("system", "Match system"), ("light", "Light"), ("dark", "Dark")):
+            item = Gtk.RadioMenuItem.new_with_label_from_widget(group, label)
+            group = group or item
+            item.set_active(value == self.session.theme)
+            item.connect("toggled", self.on_theme_chosen, value)
+            self.menu.append(item)
+        self.menu.append(Gtk.SeparatorMenuItem())
         quit_item = Gtk.MenuItem(label="Quit")
         quit_item.connect("activate", lambda *_: self.destroy())
         self.menu.append(quit_item)
         self.menu.show_all()
+
+    # -- appearance --
+
+    @property
+    def dark(self):
+        if self.session.theme == "system":
+            return system_prefers_dark()
+        return self.session.theme == "dark"
+
+    def apply_theme(self):
+        style = self.get_style_context()
+        style.remove_class("light")
+        style.remove_class("dark")
+        style.add_class("dark" if self.dark else "light")
+        self.queue_draw()
+
+    def watch_system_theme(self):
+        try:
+            source = Gio.SettingsSchemaSource.get_default()
+            if source and source.lookup("org.gnome.desktop.interface", True):
+                self._interface = Gio.Settings.new("org.gnome.desktop.interface")
+                self._interface.connect("changed::color-scheme", lambda *_: self.apply_theme())
+        except Exception:  # noqa: BLE001
+            pass
+        Gtk.Settings.get_default().connect("notify::gtk-theme-name", lambda *_: self.apply_theme())
+
+    def on_theme_chosen(self, item, value):
+        if item.get_active():
+            self.session.theme = value
+            self.session.save()
+            self.apply_theme()
 
     # -- behaviour --
 
@@ -359,7 +449,7 @@ class TimerWindow(Gtk.Window):
         cr.paint()
         cr.set_operator(cairo.OPERATOR_OVER)
         w, h = widget.get_allocated_width(), widget.get_allocated_height()
-        draw_glass(cr, SHADOW, SHADOW, w - 2 * SHADOW, h - 2 * SHADOW, RADIUS)
+        draw_glass(cr, SHADOW, SHADOW, w - 2 * SHADOW, h - 2 * SHADOW, RADIUS, self.dark)
         return False  # let children draw on top
 
     def on_button_press(self, widget, event):
@@ -417,7 +507,6 @@ class TimerWindow(Gtk.Window):
 
 
 def main():
-    GLib.set_prgname(APP_ID)  # becomes the X11 window class, used by blur extensions and the .desktop file
     # Subpixel (LCD) text antialiasing leaves colour fringes on a transparent window.
     Gtk.Settings.get_default().set_property("gtk-xft-rgba", "none")
     provider = Gtk.CssProvider()
